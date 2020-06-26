@@ -33,7 +33,7 @@ class TestLondonUsers(unittest.TestCase):
         self.assertEqual(r.status_code, 200)
 
 
-class TestWithin50Miles(unittest.TestCase):
+class TestDistanceCalculation(unittest.TestCase):
     """
     Asserts that the function to compare two coords works correctly
     """
@@ -59,9 +59,6 @@ class TestWithin50Miles(unittest.TestCase):
         p2 = (x_2, y_2)
         distance_geopy = geopydistance.distance(p1, p2).miles
         diff = discrepency_between_calcs(distance, distance_geopy)
-        print("distance is ", distance)
-        print("geopy distance is ", distance_geopy)
-        print("difference is ", diff)
         self.assertTrue(diff < 105)
         self.assertTrue(diff > 95) # asserts that deviation is less than 5% either side
 
@@ -103,12 +100,53 @@ class TestWithin50Miles(unittest.TestCase):
             distance_geopy = geopydistance.distance(user, london).miles # geopy calc
             diff = discrepency_between_calcs(distance, distance_geopy)
             if diff > 105 or diff < 95: # if discrepency is > 5% then flag it
-                print("diff:", diff, "coords: ", user)
                 count += 1
         print("count:", count)
         self.assertTrue(count == 0) # to pass the test they all have to be < 5%
 
 
+class TestWithin50Miles(unittest.TestCase):
+    """
+    Asserts that the 'within 5 miles' function works as expected
+    """
+
+    def test_true_with_nearby(self):
+        """
+        Tests with coordinates very close together
+        """
+        lat_1 = 51.509865
+        lon_1 = -0.118092
+        lat_2 = 51.709865
+        lon_2 = -0.118092
+        self.assertTrue(within_50_miles(
+            lat_1, lon_1, lat_2, lon_2)
+        )
+
+
+    def test_true_with_identical(self):
+        """
+        Tests with two identical coordinates
+        """
+        lat_1 = 51.509865
+        lon_1 = -0.118092
+        lat_2 = 51.509865
+        lon_2 = -0.118092
+        self.assertTrue(within_50_miles(
+            lat_1, lon_1, lat_2, lon_2)
+        )
+
+
+    def test_false(self):
+        """
+        Tests with two identical coordinates
+        """
+        lat_1 = 51.509865
+        lon_1 = -0.118092
+        lat_2 = 55.509865
+        lon_2 = -0.118092
+        self.assertFalse(within_50_miles(
+            lat_1, lon_1, lat_2, lon_2)
+        )
 
 
 
@@ -118,9 +156,8 @@ class TestUsersNearLondon(unittest.TestCase):
     """
 
     def get_users_near_london(self):
-        r = get_users_near_london() # to be replaced with actual coordinates within 50 miles
+        r = get_users_near_london() 
         self.assertIsNotNone(r)
-
 
 
 if __name__ == '__main__':
