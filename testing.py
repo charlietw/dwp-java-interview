@@ -1,5 +1,5 @@
 import unittest
-from run import *
+from functions import *
 from geopy import distance as geopydistance  # for testing
 
 

@@ -138,7 +138,7 @@ def get_users_near_london(users, london_lat, london_lon):
     return users_near_london
 
 
-def run():
+def return_users_near_london():
     london_lat, london_lon = 51.509865, -0.118092  # from www.latlong.net
     users = get_users_json()  # retrieves all users
     london_users = get_users_near_london(  # then narrows down
@@ -147,5 +147,3 @@ def run():
         london_lon)
 
     return london_users
-
-run()
